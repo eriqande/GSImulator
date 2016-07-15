@@ -99,5 +99,11 @@ GSImulate <- function(refsizes,
 
   message("Giving the command ", full_call)
 
-  system(full_call)
+  if(Sys.info()['sysname'] == "Windows") {
+    shell(paste(mscall, "> temp"))
+    shell(paste(ms2geno_call, "-f temp"))
+  }
+  else{
+    system(full_call)
+  }
 }

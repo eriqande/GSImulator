@@ -7,8 +7,11 @@
 #' @param Num the number of the data set to read in.  Assumes that things are
 #' named like BaseFile_X.txt and MixFile_X.txt.  Num should be what you want
 #' passed in for X there...
+#' @param coll2RU a data frame with columns "repunit" and "collection".
+#' Each collection is included once, and the "repunit" of the same row is the
+#' reporting unit to which it belongs
 #' @export
-gsim2bhru <- function(Num) {
+gsim2bhru <- function(Num, coll2RU = NULL) {
   if(length(Num) != 1) stop("sorry, Num has to be of length 1")
 
   # get the file names
@@ -18,10 +21,15 @@ gsim2bhru <- function(Num) {
   mix <- paste("MixFile_", Num, ".txt", sep = "")
   if(!file.exists(mix)) stop("Can't find the file ", mix)
 
-  list(reference = ms2geno2bhru(base),
+  df <- list(reference = ms2geno2bhru(base),
        mixture =  ms2geno2bhru(mix, isMixture = TRUE)) %>%
     dplyr::bind_rows(.id = "sample_type")
-
+  if(!is.null(coll2RU)) {
+    repunit <- coll2RU$repunit[match(df$collection, coll2RU$collection)]
+    df <- cbind(repunit, df) %>%
+      dplyr::select(sample_type, repunit, everything())
+  }
+  df
 }
 
 
