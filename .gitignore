@@ -2,4 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
+inst/bin/seedms
+seedms
 man/
