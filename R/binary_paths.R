@@ -6,6 +6,9 @@
 #'
 ms2geno_binary_path <- function() {
   bin_name <- paste("ms2geno", Sys.info()["sysname"], sep = "-")
+  if(Sys.info()["sysname"] == "Windows") {
+    bin_name <- paste(bin_name, ".exe", sep = "")
+  }
   file.path(system.file(package = "GSImulator"), "bin", bin_name)
 }
 
@@ -44,6 +47,9 @@ ms2geno_binary <- function() {
 #'
 ms_binary_path <- function() {
   bin_name <- paste("ms", Sys.info()["sysname"], sep = "-")
+  if(Sys.info()["sysname"] == "Windows") {
+    bin_name <- paste(bin_name, ".exe", sep = "")
+  }
   file.path(system.file(package = "GSImulator"), "bin", bin_name)
 }
 
