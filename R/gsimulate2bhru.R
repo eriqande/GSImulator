@@ -46,8 +46,8 @@ ms2geno2bhru <- function(x, ploidy = 2, isMixture = FALSE) {
 
   # and finally, get the collection and attach the reporting units
   ret <- tmp %>%
-    mutate(collection = stringr::str_extract(tmp$indiv, "Pop_[0-9][0-9]*")) %>%
-    select(collection, everything())
+    dplyr::mutate(collection = stringr::str_extract(tmp$indiv, "Pop_[0-9][0-9]*")) %>%
+    dplyr::select(collection, everything())
 
   if(isMixture) {
     ret$collection = "mixture"
