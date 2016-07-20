@@ -29,8 +29,37 @@ gsim2bhru <- function(Num, coll2RU = NULL) {
     df <- cbind(repunit, df) %>%
       dplyr::select(sample_type, repunit, everything())
   }
-  df
+  dplyr::tbl_df(df)
 }
+
+
+#' Compute pairwise Fst from a BaseFile using gsi_sim and return as a data frame
+#'
+#' More later
+#' @param Num the number of the data set to read in.  Assumes that things are
+#' named like BaseFile_X.txt.  Num should be what you want
+#' passed in for X there...
+#' @param coll2RU a data frame with columns "repunit" and "collection".
+#' Each collection is included once, and the "repunit" of the same row is the
+#' reporting unit to which it belongs
+#' @export
+basefile2fst <- function(Num) {
+  if(length(Num) != 1) stop("sorry, Num has to be of length 1")
+
+  # get the file names
+  base <- paste("BaseFile_", Num, ".txt", sep = "")
+  if(!file.exists(base)) stop("Can't find the file ", base)
+
+  system(paste(gsi_sim_binary(), "-b", base, "> gsi_sim_dumpola.txt"))
+  x <- readr::read_lines("gsi_sim_dumpola.txt")
+  x2 <- x[stringr::str_detect(x, "^PAIRWISE")]
+  ret <- as.data.frame(stringr::str_split_fixed(x2, "  *", 7)[, c(3,5,7)], stringsAsFactors = FALSE)
+  names(ret) <- c("pop1", "pop2", "fst")
+  ret$fst <- as.numeric(ret$fst)
+  dplyr::tbl_df(ret)
+}
+
+
 
 
 # this is an unexported function for converting a gsi_sim like file to bhru type format

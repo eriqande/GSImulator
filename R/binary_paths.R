@@ -83,3 +83,49 @@ ms_binary <- function() {
 
 }
 
+
+
+
+
+######### gsi_sim funcs  ##########
+#' return the path where  should be in the R system paths
+#'
+gsi_sim_binary_path <- function() {
+  bin_name <- paste("gsi_sim", Sys.info()["sysname"], sep = "-")
+  if(Sys.info()["sysname"] == "Windows") {
+    bin_name <- paste(bin_name, ".exe", sep = "")
+  }
+  file.path(system.file(package = "GSImulator"), "bin", bin_name)
+}
+
+#' return TRUE if gsi_sim exists where it should be
+#'
+gsi_sim_exists <- function() {
+  file.exists(gsi_sim_binary_path())
+}
+
+
+#' return TRUE if gsi_sim is executable
+#'
+gsi_sim_is_executable <- function() {
+  NULL #incomplete
+}
+
+
+#' file path to be used in a call to gsi_sim
+#'
+#' This version checks to make sure it is there and throws an
+#' error with a suggestion of how to get it if it is not there.
+#' @export
+gsi_sim_binary <- function() {
+  if(!gsi_sim_exists()) stop("Can't find the gsi_sim executable where it was expected
+                        at ", gsi_sim_binary_path(), ".")
+
+  # then I should check to make sure it is executable
+
+  # if so, return the path
+  gsi_sim_binary_path()
+
+}
+
+

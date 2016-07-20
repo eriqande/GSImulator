@@ -2,7 +2,10 @@
 
 export("%>%")
 export(GSImulate)
+export(basefile2fst)
+export(gsi_sim_binary)
 export(gsim2bhru)
 export(ms2geno_binary)
 export(ms_binary)
+export(sh_island_mig_mat)
 importFrom(magrittr,"%>%")
