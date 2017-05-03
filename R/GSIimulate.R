@@ -1,7 +1,7 @@
 
 
 
-#' Simulate baseline and mixture files in to the current working directory
+#' Simulate baseline and mixture files into the current working directory
 #'
 #' This is a wrapper around ms2geno that should make it much easier to use
 #' @param refsizes integer vector of sample sizes for the reference samples from each
@@ -14,7 +14,8 @@
 #' @param marker_pars a string that gives all the command line arguments needed for either microsatellites or SNPs
 #' (but not both!) to be simulated.  See the documentation for ms2geno.
 #' @param M_num a number for 4Nem to be passed to ms to make a symmetrical island model.  Gets overridden by
-#' M_matrix if M_matrix is present (i.e. non-NULL).
+#' M_matrix if M_matrix is present (i.e. non-NULL).  Set this to NA if you want to simulate a single panmictic
+#' population that is masquerading as multiple populations using ms2geno's --ms-pop-override option.
 #' @param M_matrix  a full migration matrix if you want to pass one in.  Will override M_num if present.
 #' By default it will be NULL.
 #' @param repunits optional vector that must be the same length as refsizes and which gives the
@@ -32,6 +33,16 @@
 #'    variability_string = "-t 2.4",
 #'    marker_pars = "-u .15 3",
 #'    M_num = 5)
+#'
+#' # microsatellites using --ms-pop-override
+#' GSImulate(
+#'    refsizes = c(200, 200, 150, 100),
+#'    mixsizes = c(25, 25, 10, 30),
+#'    num_loci = 20,
+#'    num_sets = 5,
+#'    variability_string = "-t 2.4",
+#'    marker_pars = "-u .15 3",
+#'    M_num = NA)
 #'
 #' # SNPs ascertained from 8 individuals from each population
 #' # and taken if all three genotypes are seen
@@ -70,19 +81,27 @@ GSImulate <- function(refsizes,
   # get the first part of the ms system call
   ms_main <- paste(ms_binary(), totgc, ntrees, variability_string)
 
-  # now, deal with the migration rate stuff.
-  ms_mig_start <- paste("-I", length(refsizes), paste(gcboth, collapse = " ") )
+
 
   # now set the migration rates
   if(all(is.null(M_matrix), is.null(M_num))) stop("One of M_num or M_matrix must be provided");
 
-  if(is.null(M_matrix)) {
-    ms_mig_end <- M_num
+  if(is.na(M_num)) {
+    ms_mig_start <- ""
+    ms_mig_end <- ""
+    ms_pop_override <- paste0(" --ms-pop-override ", paste(gcboth, collapse = " "))
   } else {
-    rc <- dim(M_matrix)
-    ms_mig_end <- paste("-ma ", paste(t(M_matrix), collapse = " " ))
-  }
+    ms_pop_override <- ""
+    # now, deal with the migration rate stuff.
+    ms_mig_start <- paste("-I", length(refsizes), paste(gcboth, collapse = " ") )
 
+    if(is.null(M_matrix)) {
+      ms_mig_end <- M_num
+    } else {
+      rc <- dim(M_matrix)
+      ms_mig_end <- paste("-ma ", paste(t(M_matrix), collapse = " " ))
+    }
+  }
   # here is our full ms call
   mscall <- paste(ms_main, ms_mig_start, ms_mig_end)
 
@@ -93,7 +112,8 @@ GSImulate <- function(refsizes,
                         "-l", num_loci,
                         "-b", paste(refsizes, collapse = " "),
                         "-m", paste(mixsizes, collapse = " "),
-                        marker_pars
+                        marker_pars,
+                        ms_pop_override
                         )
   full_call <- paste(mscall, "|", ms2geno_call)
 

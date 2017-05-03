@@ -2,7 +2,7 @@
 % Please edit documentation in R/GSIimulate.R
 \name{GSImulate}
 \alias{GSImulate}
-\title{Simulate baseline and mixture files in to the current working directory}
+\title{Simulate baseline and mixture files into the current working directory}
 \usage{
 GSImulate(refsizes, mixsizes, num_loci, num_sets, variability_string,
   marker_pars, M_num = NULL, M_matrix = NULL, repunits = character(0),
@@ -26,7 +26,8 @@ like "-s 20" for fixed number of segsites, or "-t 8" to set the value of theta t
 (but not both!) to be simulated.  See the documentation for ms2geno.}
 
 \item{M_num}{a number for 4Nem to be passed to ms to make a symmetrical island model.  Gets overridden by
-M_matrix if M_matrix is present (i.e. non-NULL).}
+M_matrix if M_matrix is present (i.e. non-NULL).  Set this to NA if you want to simulate a single panmictic
+population that is masquerading as multiple populations using ms2geno's --ms-pop-override option.}
 
 \item{M_matrix}{a full migration matrix if you want to pass one in.  Will override M_num if present.
 By default it will be NULL.}
@@ -49,6 +50,16 @@ GSImulate(
    variability_string = "-t 2.4",
    marker_pars = "-u .15 3",
    M_num = 5)
+
+# microsatellites using --ms-pop-override
+GSImulate(
+   refsizes = c(200, 200, 150, 100),
+   mixsizes = c(25, 25, 10, 30),
+   num_loci = 20,
+   num_sets = 5,
+   variability_string = "-t 2.4",
+   marker_pars = "-u .15 3",
+   M_num = NA)
 
 # SNPs ascertained from 8 individuals from each population
 # and taken if all three genotypes are seen
