@@ -6,7 +6,7 @@
 \usage{
 GSImulate(refsizes, mixsizes, num_loci, num_sets, variability_string,
   marker_pars, M_num = NULL, M_matrix = NULL, repunits = character(0),
-  ploidy = 2)
+  ploidy = 2, write_012 = FALSE)
 }
 \arguments{
 \item{refsizes}{integer vector of sample sizes for the reference samples from each
@@ -35,7 +35,10 @@ By default it will be NULL.}
 \item{repunits}{optional vector that must be the same length as refsizes and which gives the
 reporting units to which each collection belongs (NOT IMPLEMENTED)}
 
-\item{ploiy}{the ploidy of the organisms to be simulated.}
+\item{ploidy}{the ploidy of the organisms to be simulated.}
+
+\item{write_012}{logical. If TRUE, writes Basefile and Mixfile as sets of 012 files
+to be read by, for example, genoscapeRtools::read_012.  Default is FALSE}
 }
 \description{
 This is a wrapper around ms2geno that should make it much easier to use
@@ -72,4 +75,3 @@ GSImulate(
    marker_pars = "-s 1 8 -2 -s 2 8 -2 -s 3 8 -2 -s 4 8 -2 --all-pops-geno-asc",
    M_num = 5)
 }
-

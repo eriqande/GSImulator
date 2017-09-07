@@ -9,4 +9,3 @@ ms2geno_exists()
 \description{
 return TRUE if ms2geno exists where it should be
 }
-

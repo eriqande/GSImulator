@@ -9,4 +9,3 @@ ms2geno_binary_path()
 \description{
 return the path where ms2geno should be in the R system paths
 }
-

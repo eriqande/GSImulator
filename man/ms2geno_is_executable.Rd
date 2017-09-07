@@ -9,4 +9,3 @@ ms2geno_is_executable()
 \description{
 return TRUE if ms2geno is executable
 }
-

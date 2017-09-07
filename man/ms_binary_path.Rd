@@ -9,4 +9,3 @@ ms_binary_path()
 \description{
 return the path where ms should be in the R system paths
 }
-

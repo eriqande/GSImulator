@@ -27,4 +27,3 @@ Returns that matrix in text format to pass into ms
 This provides the migration matrix for one of the simplest possible
 island models with migration rates within and between groups.
 }
-

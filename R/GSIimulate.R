@@ -21,7 +21,9 @@
 #' @param repunits optional vector that must be the same length as refsizes and which gives the
 #' reporting units to which each collection belongs (NOT IMPLEMENTED)
 #' @param num_sets desired number of data sets.
-#' @param ploiy the ploidy of the organisms to be simulated.
+#' @param ploidy the ploidy of the organisms to be simulated.
+#' @param write_012 logical. If TRUE, writes Basefile and Mixfile as sets of 012 files
+#' to be read by, for example, genoscapeRtools::read_012.  Default is FALSE
 #' @export
 #' @examples
 #' # microsatellites
@@ -64,9 +66,10 @@ GSImulate <- function(refsizes,
                       M_num = NULL,
                       M_matrix = NULL,
                       repunits = character(0),
-                      ploidy = 2) {
+                      ploidy = 2,
+                      write_012 = FALSE) {
 
-  if(length(refsizes) != length(mixsizes)) stop("Gotta have the same number of populations in refsizes and mixsizes")
+  if (length(refsizes) != length(mixsizes)) stop("Gotta have the same number of populations in refsizes and mixsizes")
 
   # make some variables to hold number of gene copies in each population, etc, for ms
   gcr <- refsizes * ploidy
@@ -84,9 +87,9 @@ GSImulate <- function(refsizes,
 
 
   # now set the migration rates
-  if(all(is.null(M_matrix), is.null(M_num))) stop("One of M_num or M_matrix must be provided");
+  if (all(is.null(M_matrix), is.null(M_num))) stop("One of M_num or M_matrix must be provided");
 
-  if(is.na(M_num)) {
+  if (is.na(M_num)) {
     ms_mig_start <- ""
     ms_mig_end <- ""
     ms_pop_override <- paste0(" --ms-pop-override ", paste(gcboth, collapse = " "))
@@ -95,7 +98,7 @@ GSImulate <- function(refsizes,
     # now, deal with the migration rate stuff.
     ms_mig_start <- paste("-I", length(refsizes), paste(gcboth, collapse = " ") )
 
-    if(is.null(M_matrix)) {
+    if (is.null(M_matrix)) {
       ms_mig_end <- M_num
     } else {
       rc <- dim(M_matrix)
@@ -107,11 +110,16 @@ GSImulate <- function(refsizes,
 
 
   # now we need to compile the call to ms2geno
+  w012 <- " "
+  if (write_012 == TRUE) {
+    w012 <- " -o "
+  }
   ms2geno_call <- paste(ms2geno_binary(),
                         "--ploidy", ploidy,
                         "-l", num_loci,
                         "-b", paste(refsizes, collapse = " "),
                         "-m", paste(mixsizes, collapse = " "),
+                        w012,
                         marker_pars,
                         ms_pop_override
                         )
@@ -119,7 +127,7 @@ GSImulate <- function(refsizes,
 
   message("Giving the command ", full_call)
 
-  if(Sys.info()['sysname'] == "Windows") {
+  if (Sys.info()['sysname'] == "Windows") {
     shell(paste(mscall, "> temp"))
     shell(paste(ms2geno_call, "-f temp"))
   }

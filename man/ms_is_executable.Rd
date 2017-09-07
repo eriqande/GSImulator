@@ -9,4 +9,3 @@ ms_is_executable()
 \description{
 return TRUE if ms is executable
 }
-
